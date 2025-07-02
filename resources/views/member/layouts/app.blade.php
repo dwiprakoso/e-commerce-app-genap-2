@@ -20,7 +20,8 @@
     <!-- Bootstrap CSS & Travela Custom CSS -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="assets/css/style.css" rel="stylesheet" />
-
+    <!-- Stack untuk custom styles dari view -->
+    @stack('styles')
     <style>
         /* Custom Styles untuk Travela Look */
         .hero-header {
@@ -250,6 +251,7 @@
         // WOW Animation
         new WOW().init();
     </script>
+    @stack('scripts')
 </body>
 
 </html>

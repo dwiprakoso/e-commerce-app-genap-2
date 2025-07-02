@@ -1,136 +1,160 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Breadcrumb -->
-    <section class="bg-gray-100 py-4">
-        <div class="container mx-auto px-4">
-            <nav class="text-sm">
-                <ol class="list-none p-0 inline-flex">
-                    <li class="flex items-center">
-                        <a href="{{ route('member.home') }}" class="text-blue-600 hover:text-blue-800">Beranda</a>
-                        <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center">
-                        <a href="{{ route('member.berita.index') }}" class="text-blue-600 hover:text-blue-800">Berita</a>
-                        <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    </li>
-                    <li class="text-gray-500">{{ Str::limit($berita->title, 50) }}</li>
-                </ol>
-            </nav>
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid bg-primary py-5 mb-5">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb breadcrumb-dark mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('member.home') }}" class="text-white text-decoration-none">
+                                    <i class="fas fa-home me-1"></i>Beranda
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('member.berita.index') }}"
+                                    class="text-white text-decoration-none">Berita</a>
+                            </li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">
+                                {{ Str::limit($berita->title, 50) }}</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Page Title -->
+                    <div class="text-white">
+                        <h1 class="display-4 text-white mb-0 animated slideInDown">Detail Berita</h1>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+    <!-- Breadcrumb End -->
 
-    <!-- Article Content -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <!-- Article Header -->
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-gray-800 mb-6">{{ $berita->title }}</h1>
+    <!-- Article Content Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Article Header -->
+                    <div class="mb-5">
+                        <h1 class="display-5 fw-bold text-dark mb-4">{{ $berita->title }}</h1>
 
-                    <!-- Meta Information -->
-                    <div class="flex items-center space-x-6 text-gray-500 mb-6">
-                        <div class="flex items-center">
-                            <i class="fas fa-calendar-alt mr-2"></i>
-                            <span>{{ \Carbon\Carbon::parse($berita->created_at)->format('d F Y') }}</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span>{{ \Carbon\Carbon::parse($berita->created_at)->diffForHumans() }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Featured Image -->
-                <div class="mb-8">
-                    <div class="h-96 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg relative overflow-hidden">
-                        @if ($berita->image_url)
-                            <img src="{{ asset('storage/' . $berita->image_url) }}" alt="{{ $berita->title }}"
-                                class="w-full h-full object-cover rounded-lg">
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i class="fas fa-newspaper text-white text-6xl opacity-50"></i>
+                        <!-- Meta Information -->
+                        <div class="d-flex flex-wrap align-items-center text-muted mb-4">
+                            <div class="me-4 mb-2">
+                                <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                                <span>{{ \Carbon\Carbon::parse($berita->created_at)->format('d F Y') }}</span>
                             </div>
-                        @endif
+                            <div class="mb-2">
+                                <i class="fas fa-clock me-2 text-primary"></i>
+                                <span>{{ \Carbon\Carbon::parse($berita->created_at)->diffForHumans() }}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Article Content -->
-                <div class="prose prose-lg max-w-none">
-                    <div class="text-gray-700 leading-relaxed">
-                        {!! nl2br(e($berita->content)) !!}
+                    <!-- Featured Image -->
+                    <div class="mb-5">
+                        <div class="rounded overflow-hidden shadow-lg">
+                            @if ($berita->image_url)
+                                <img src="{{ asset('storage/' . $berita->image_url) }}" alt="{{ $berita->title }}"
+                                    class="img-fluid w-100" style="height: 400px; object-fit: cover;">
+                            @else
+                                <div class="bg-light d-flex align-items-center justify-content-center"
+                                    style="height: 400px;">
+                                    <i class="fas fa-newspaper text-primary fa-5x opacity-50"></i>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
 
-                <!-- Share Section -->
-                <div class="mt-12 pt-8 border-t border-gray-200">
-                    <div class="flex items-center justify-between">
-                        <div>
+                    <!-- Article Content -->
+                    <div class="article-content mb-5">
+                        <div class="text-muted fs-5 lh-lg">
+                            {!! nl2br(e($berita->content)) !!}
+                        </div>
+                    </div>
+
+                    <!-- Back Button Section -->
+                    <div class="mt-5 pt-4 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
                             <a href="{{ route('member.berita.index') }}"
-                                class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Kembali ke Berita
+                                class="btn btn-outline-primary rounded-pill px-4 py-2">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali ke Berita
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+    <!-- Article Content End -->
 
-    <!-- Related Articles -->
+    <!-- Related Articles Start -->
     @if ($beritaLainnya->count() > 0)
-        <section class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Berita Lainnya</h2>
-                    <p class="text-gray-600">Artikel menarik lainnya yang mungkin Anda suka</p>
+        <div class="container-xxl py-5 bg-light">
+            <div class="container">
+                <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                    <h6 class="section-title bg-white text-center text-primary px-3">Berita Lainnya</h6>
+                    <h2 class="mb-4">Artikel Menarik Lainnya</h2>
+                    <p class="text-muted">Artikel menarik lainnya yang mungkin Anda suka</p>
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="row g-4">
                     @foreach ($beritaLainnya as $item)
-                        <article
-                            class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-                            <!-- Image Placeholder -->
-                            <div class="h-48 bg-gradient-to-r from-purple-400 to-pink-500 relative overflow-hidden">
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="card border-0 shadow card-hover h-100">
                                 @if ($item->image_url)
-                                    <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->title }}"
-                                        class="w-full h-full object-cover">
+                                    <div class="position-relative overflow-hidden">
+                                        <img src="{{ asset('storage/' . $item->image_url) }}" class="card-img-top"
+                                            alt="{{ $item->title }}" style="height: 200px; object-fit: cover;">
+                                        <!-- Date Badge -->
+                                        <div class="position-absolute bottom-0 start-0 m-3">
+                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
+                                                <i class="fa fa-calendar-alt me-1"></i>
+                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M') }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 @else
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <i class="fas fa-newspaper text-white text-4xl opacity-50"></i>
+                                    <div class="bg-light d-flex align-items-center justify-content-center position-relative"
+                                        style="height: 200px;">
+                                        <i class="fas fa-newspaper text-primary fa-3x opacity-50"></i>
+                                        <!-- Date Badge -->
+                                        <div class="position-absolute bottom-0 start-0 m-3">
+                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
+                                                <i class="fa fa-calendar-alt me-1"></i>
+                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M') }}
+                                            </span>
+                                        </div>
                                     </div>
                                 @endif
-                                <!-- Date Badge -->
-                                <div class="absolute bottom-4 left-4">
-                                    <span class="bg-white text-blue-600 px-3 py-2 rounded-lg font-bold text-sm shadow-md">
-                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d M') }}
-                                    </span>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <h5 class="card-title mb-3 line-clamp-2">{{ $item->title }}</h5>
+                                    <p class="card-text flex-grow-1 text-muted line-clamp-2">
+                                        {{ Str::limit(strip_tags($item->content), 100) }}
+                                    </p>
+
+                                    <!-- Meta Info -->
+                                    <div class="d-flex align-items-center text-muted mb-3">
+                                        <small><i class="fas fa-clock me-1"></i>
+                                            {{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <a href="{{ route('member.berita.show', $item->id) }}" class="btn btn-primary mt-auto">
+                                        Baca Artikel
+                                    </a>
                                 </div>
                             </div>
-
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">{{ $item->title }}</h3>
-                                <p class="text-gray-600 mb-4 line-clamp-2">
-                                    {{ Str::limit(strip_tags($item->content), 100) }}</p>
-
-                                <!-- Date Info -->
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    <span>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</span>
-                                </div>
-
-                                <!-- Action Button -->
-                                <a href="{{ route('member.berita.show', $item->id) }}"
-                                    class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition duration-200">
-                                    Baca Artikel
-                                </a>
-                            </div>
-                        </article>
+                        </div>
                     @endforeach
                 </div>
             </div>
-        </section>
+        </div>
     @endif
+    <!-- Related Articles End -->
 @endsection
 
 @push('styles')
@@ -142,13 +166,54 @@
             overflow: hidden;
         }
 
-        .prose {
-            max-width: none;
-        }
-
-        .prose p {
+        .article-content p {
             margin-bottom: 1.5rem;
             line-height: 1.8;
+        }
+
+        .breadcrumb-dark .breadcrumb-item+.breadcrumb-item::before {
+            content: var(--bs-breadcrumb-divider, ">") !important;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Fix untuk navbar yang tersembunyi */
+        body {
+            padding-top: 100px;
+            /* Beri ruang untuk navbar */
+        }
+
+        /* Fix sidebar/navbar supaya fixed di atas dengan shadow */
+        .container-fluid.position-relative.p-0:first-child,
+        nav.navbar:first-child {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1050 !important;
+            background-color: #fff !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Pastikan breadcrumb tidak tertutup navbar */
+        .container-fluid.bg-primary {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Styling untuk navbar agar terlihat jelas */
+        .navbar-brand h1 {
+            color: #13357B !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #13357B !important;
         }
     </style>
 @endpush

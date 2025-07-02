@@ -1,69 +1,80 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-green-600 to-blue-700 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Berita Terkini</h1>
-            <p class="text-xl mb-6 max-w-2xl mx-auto">
-                Ikuti berita dan update terbaru seputar dunia pariwisata Indonesia
-            </p>
+    <!-- Hero Section Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+        <div class="container py-5">
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Berita Terkini</h1>
+                    <p class="fs-4 text-white mb-4 animated slideInDown">Ikuti berita dan update terbaru seputar dunia
+                        pariwisata Indonesia</p>
+                </div>
+            </div>
         </div>
-    </section>
-    <!-- Berita Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
+    </div>
+    <!-- Hero Section End -->
+
+    <!-- Berita Section Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
             @if ($berita->count() > 0)
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="row g-4">
                     @foreach ($berita as $item)
-                        <article
-                            class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-                            <!-- Image Placeholder -->
-                            <div class="h-48 bg-gradient-to-r from-green-400 to-blue-500 relative overflow-hidden">
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="card border-0 shadow card-hover h-100">
                                 @if ($item->image_url)
-                                    <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->title }}"
-                                        class="w-full h-full object-cover">
+                                    <div class="position-relative overflow-hidden">
+                                        <img src="{{ asset('storage/' . $item->image_url) }}" class="card-img-top"
+                                            alt="{{ $item->title }}" style="height: 250px; object-fit: cover;">
+                                        <!-- Date Badge -->
+                                        <div class="position-absolute bottom-0 start-0 m-3">
+                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
+                                                <i class="fa fa-calendar-alt me-1"></i>
+                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 @else
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <i class="fas fa-newspaper text-white text-4xl opacity-50"></i>
+                                    <div class="bg-light d-flex align-items-center justify-content-center position-relative"
+                                        style="height: 250px;">
+                                        <i class="fas fa-newspaper text-primary fa-3x opacity-50"></i>
+                                        <!-- Date Badge -->
+                                        <div class="position-absolute bottom-0 start-0 m-3">
+                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
+                                                <i class="fa fa-calendar-alt me-1"></i>
+                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+                                            </span>
+                                        </div>
                                     </div>
                                 @endif
-                                <!-- Date Badge -->
-                                <div class="absolute bottom-4 left-4">
-                                    <span class="bg-white text-blue-600 px-3 py-2 rounded-lg font-bold text-sm shadow-md">
-                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
-                                    </span>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <h5 class="card-title mb-3 line-clamp-2">{{ $item->title }}</h5>
+                                    <p class="card-text flex-grow-1 text-muted line-clamp-3">
+                                        {{ Str::limit(strip_tags($item->content), 150) }}</p>
+
+                                    <!-- Meta Info -->
+                                    <div class="d-flex align-items-center text-muted mb-3">
+                                        <small><i class="fas fa-clock me-1"></i>
+                                            {{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <a href="{{ route('member.berita.show', $item->id) }}" class="btn btn-primary mt-auto">
+                                        <i class="fas fa-eye me-2"></i>Baca Selengkapnya
+                                    </a>
                                 </div>
                             </div>
-
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">{{ $item->title }}</h3>
-                                <p class="text-gray-600 mb-4 line-clamp-3">{{ Str::limit(strip_tags($item->content), 150) }}
-                                </p>
-
-                                <!-- Meta Info -->
-                                <div class="flex items-center text-sm text-gray-500 mb-6">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    <span>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</span>
-                                </div>
-
-                                <!-- Action Button -->
-                                <a href="{{ route('member.berita.show', $item->id) }}"
-                                    class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition duration-200">
-                                    <i class="fas fa-eye mr-2"></i>
-                                    Baca Selengkapnya
-                                </a>
-                            </div>
-                        </article>
+                        </div>
                     @endforeach
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-16">
-                    <div class="mb-6">
-                        <i class="fas fa-newspaper text-6xl text-gray-300"></i>
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-newspaper text-muted fa-5x mb-3"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-600 mb-4">Belum Ada Berita</h3>
-                    <p class="text-gray-500 mb-6">
+                    <h3 class="text-muted mb-4">Belum Ada Berita</h3>
+                    <p class="text-muted mb-4">
                         @if (request('search'))
                             Tidak ditemukan berita dengan kata kunci "{{ request('search') }}"
                         @else
@@ -71,20 +82,19 @@
                         @endif
                     </p>
                     @if (request('search'))
-                        <a href="{{ route('member.berita.index') }}"
-                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                        <a href="{{ route('member.berita.index') }}" class="btn btn-primary rounded-pill py-3 px-5">
                             Lihat Semua Berita
                         </a>
                     @else
-                        <a href="{{ route('member.home') }}"
-                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                        <a href="{{ route('member.home') }}" class="btn btn-primary rounded-pill py-3 px-5">
                             Kembali ke Beranda
                         </a>
                     @endif
                 </div>
             @endif
         </div>
-    </section>
+    </div>
+    <!-- Berita Section End -->
 @endsection
 
 @push('styles')
@@ -101,6 +111,13 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        .hero-header {
+            background: linear-gradient(rgba(19, 53, 123, 0.8), rgba(19, 53, 123, 0.8)), url('assets/img/carousel-2.jpg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
     </style>
 @endpush
