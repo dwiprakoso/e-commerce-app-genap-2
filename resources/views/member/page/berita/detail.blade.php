@@ -1,70 +1,59 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Breadcrumb Start -->
-    <div class="container-fluid bg-primary py-5 mb-5">
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary py-5 page-header">
         <div class="container py-5">
             <div class="row">
                 <div class="col-12">
-                    <!-- Breadcrumb -->
-                    <nav aria-label="breadcrumb" class="mb-4">
-                        <ol class="breadcrumb breadcrumb-dark mb-0">
+                    <h1 class="display-3 text-white animated slideInDown mb-4">{{ $berita->title }}</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb text-uppercase mb-0">
                             <li class="breadcrumb-item">
-                                <a href="{{ route('member.home') }}" class="text-white text-decoration-none">
-                                    <i class="fas fa-home me-1"></i>Beranda
-                                </a>
+                                <a href="{{ route('member.home') }}" class="text-white">Beranda</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('member.berita.index') }}"
-                                    class="text-white text-decoration-none">Berita</a>
+                                <a href="{{ route('member.berita.index') }}" class="text-white">Berita</a>
                             </li>
-                            <li class="breadcrumb-item active text-white-50" aria-current="page">
-                                {{ Str::limit($berita->title, 50) }}</li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Detail Berita</li>
                         </ol>
                     </nav>
-
-                    <!-- Page Title -->
-                    <div class="text-white">
-                        <h1 class="display-4 text-white mb-0 animated slideInDown">Detail Berita</h1>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Breadcrumb End -->
+    <!-- Page Header End -->
 
-    <!-- Article Content Start -->
+    <!-- Article Content -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <!-- Article Header -->
-                    <div class="mb-5">
-                        <h1 class="display-5 fw-bold text-dark mb-4">{{ $berita->title }}</h1>
-
+                    <div class="mb-4">
                         <!-- Meta Information -->
-                        <div class="d-flex flex-wrap align-items-center text-muted mb-4">
-                            <div class="me-4 mb-2">
+                        <div class="d-flex flex-wrap align-items-center mb-4">
+                            <div class="d-flex align-items-center me-4">
                                 <i class="fas fa-calendar-alt me-2 text-primary"></i>
-                                <span>{{ \Carbon\Carbon::parse($berita->created_at)->format('d F Y') }}</span>
+                                <span
+                                    class="text-muted">{{ \Carbon\Carbon::parse($berita->created_at)->format('d F Y') }}</span>
                             </div>
-                            <div class="mb-2">
+                            <div class="d-flex align-items-center">
                                 <i class="fas fa-clock me-2 text-primary"></i>
-                                <span>{{ \Carbon\Carbon::parse($berita->created_at)->diffForHumans() }}</span>
+                                <span
+                                    class="text-muted">{{ \Carbon\Carbon::parse($berita->created_at)->diffForHumans() }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Featured Image -->
                     <div class="mb-5">
-                        <div class="rounded overflow-hidden shadow-lg">
+                        <div class="bg-gradient-primary d-flex align-items-center justify-content-center rounded overflow-hidden shadow position-relative"
+                            style="height: 400px;">
                             @if ($berita->image_url)
                                 <img src="{{ asset('storage/' . $berita->image_url) }}" alt="{{ $berita->title }}"
-                                    class="img-fluid w-100" style="height: 400px; object-fit: cover;">
+                                    class="w-100 h-100" style="object-fit: cover;">
                             @else
-                                <div class="bg-light d-flex align-items-center justify-content-center"
-                                    style="height: 400px;">
-                                    <i class="fas fa-newspaper text-primary fa-5x opacity-50"></i>
-                                </div>
+                                <i class="fas fa-newspaper text-white fa-4x opacity-50"></i>
                             @endif
                         </div>
                     </div>
@@ -76,74 +65,86 @@
                         </div>
                     </div>
 
-                    <!-- Back Button Section -->
-                    <div class="mt-5 pt-4 border-top">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ route('member.berita.index') }}"
-                                class="btn btn-outline-primary rounded-pill px-4 py-2">
-                                <i class="fas fa-arrow-left me-2"></i>Kembali ke Berita
-                            </a>
+                    <!-- Share Section -->
+                    <div class="border-top pt-4 mt-5">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h5 class="fw-bold text-dark mb-3">Bagikan Artikel</h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-primary">
+                                        <i class="fab fa-facebook-f me-2"></i>
+                                        Facebook
+                                    </button>
+                                    <button class="btn btn-info text-white">
+                                        <i class="fab fa-twitter me-2"></i>
+                                        Twitter
+                                    </button>
+                                    <button class="btn btn-success">
+                                        <i class="fab fa-whatsapp me-2"></i>
+                                        WhatsApp
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                                <a href="{{ route('member.berita.index') }}" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Kembali ke Berita
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Article Content End -->
 
-    <!-- Related Articles Start -->
+    <!-- Related Articles -->
     @if ($beritaLainnya->count() > 0)
         <div class="container-xxl py-5 bg-light">
             <div class="container">
                 <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
                     <h6 class="section-title bg-white text-center text-primary px-3">Berita Lainnya</h6>
-                    <h2 class="mb-4">Artikel Menarik Lainnya</h2>
-                    <p class="text-muted">Artikel menarik lainnya yang mungkin Anda suka</p>
+                    <h1 class="mb-5">Artikel Menarik Lainnya</h1>
                 </div>
 
                 <div class="row g-4">
                     @foreach ($beritaLainnya as $item)
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="card border-0 shadow card-hover h-100">
-                                @if ($item->image_url)
-                                    <div class="position-relative overflow-hidden">
-                                        <img src="{{ asset('storage/' . $item->image_url) }}" class="card-img-top"
-                                            alt="{{ $item->title }}" style="height: 200px; object-fit: cover;">
-                                        <!-- Date Badge -->
-                                        <div class="position-absolute bottom-0 start-0 m-3">
-                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
-                                                <i class="fa fa-calendar-alt me-1"></i>
-                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M') }}
-                                            </span>
-                                        </div>
+                                <!-- Article Image -->
+                                <div class="position-relative">
+                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center"
+                                        style="height: 250px;">
+                                        @if ($item->image_url)
+                                            <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->title }}"
+                                                class="card-img-top" style="height: 250px; object-fit: cover;">
+                                        @else
+                                            <i class="fas fa-newspaper text-white fa-4x opacity-50"></i>
+                                        @endif
                                     </div>
-                                @else
-                                    <div class="bg-light d-flex align-items-center justify-content-center position-relative"
-                                        style="height: 200px;">
-                                        <i class="fas fa-newspaper text-primary fa-3x opacity-50"></i>
-                                        <!-- Date Badge -->
-                                        <div class="position-absolute bottom-0 start-0 m-3">
-                                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill shadow">
-                                                <i class="fa fa-calendar-alt me-1"></i>
-                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M') }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endif
-                                <div class="card-body p-4 d-flex flex-column">
-                                    <h5 class="card-title mb-3 line-clamp-2">{{ $item->title }}</h5>
-                                    <p class="card-text flex-grow-1 text-muted line-clamp-2">
-                                        {{ Str::limit(strip_tags($item->content), 100) }}
-                                    </p>
 
-                                    <!-- Meta Info -->
-                                    <div class="d-flex align-items-center text-muted mb-3">
-                                        <small><i class="fas fa-clock me-1"></i>
-                                            {{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
+                                    <!-- Date Badge -->
+                                    <div class="position-absolute bottom-0 start-0 m-3">
+                                        <span class="badge bg-white text-primary fs-6 px-3 py-2 shadow">
+                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <h5 class="card-title mb-3 text-truncate-2">{{ $item->title }}</h5>
+                                    <p class="card-text text-muted mb-3 text-truncate-2">
+                                        {{ Str::limit(strip_tags($item->content), 100) }}</p>
+
+                                    <!-- Date Info -->
+                                    <div class="d-flex align-items-center text-muted mb-4">
+                                        <i class="fas fa-clock me-2 text-primary"></i>
+                                        <small>{{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
                                     </div>
 
                                     <!-- Action Button -->
                                     <a href="{{ route('member.berita.show', $item->id) }}" class="btn btn-primary mt-auto">
+                                        <i class="fas fa-eye me-2"></i>
                                         Baca Artikel
                                     </a>
                                 </div>
@@ -154,66 +155,41 @@
             </div>
         </div>
     @endif
-    <!-- Related Articles End -->
 @endsection
 
 @push('styles')
     <style>
-        .line-clamp-2 {
+        .text-truncate-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .hover-overlay {
+            transition: all 0.3s ease;
+        }
+
+        .hover-overlay:hover {
+            background-color: rgba(0, 0, 0, 0.9) !important;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         .article-content p {
             margin-bottom: 1.5rem;
             line-height: 1.8;
-        }
-
-        .breadcrumb-dark .breadcrumb-item+.breadcrumb-item::before {
-            content: var(--bs-breadcrumb-divider, ">") !important;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Fix untuk navbar yang tersembunyi */
-        body {
-            padding-top: 100px;
-            /* Beri ruang untuk navbar */
-        }
-
-        /* Fix sidebar/navbar supaya fixed di atas dengan shadow */
-        .container-fluid.position-relative.p-0:first-child,
-        nav.navbar:first-child {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 1050 !important;
-            background-color: #fff !important;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1) !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-        }
-
-        /* Pastikan breadcrumb tidak tertutup navbar */
-        .container-fluid.bg-primary {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Styling untuk navbar agar terlihat jelas */
-        .navbar-brand h1 {
-            color: #13357B !important;
-        }
-
-        .navbar-nav .nav-link {
-            color: #333 !important;
-            font-weight: 500;
-        }
-
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: #13357B !important;
         }
     </style>
 @endpush

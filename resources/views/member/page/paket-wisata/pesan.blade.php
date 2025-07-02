@@ -1,141 +1,172 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-green-600 to-blue-700 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Pesan Paket Wisata</h1>
-            <p class="text-xl mb-6 max-w-2xl mx-auto">
-                Lengkapi data pemesanan Anda untuk {{ $paket->title }}
-            </p>
-        </div>
-    </section>
-
-    <!-- Form Pemesanan -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <div class="grid md:grid-cols-2 gap-8">
-                    <!-- Detail Paket -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <div class="h-48 bg-gradient-to-r from-blue-400 to-purple-500 relative">
-                            @if ($paket->image_url)
-                                <img src="{{ asset('storage/' . $paket->image_url) }}" alt="{{ $paket->title }}"
-                                    class="w-full h-full object-cover transition duration-300 group-hover:scale-110">
-                            @else
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <i class="fas fa-image text-white text-4xl opacity-50"></i>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-3">{{ $paket->title }}</h3>
-                            <p class="text-gray-600 mb-4">{{ $paket->description }}</p>
-
-                            <div class="space-y-3">
-                                <div class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-calendar-alt mr-3 text-blue-500"></i>
-                                    <span>{{ \Carbon\Carbon::parse($paket->start_date)->format('d M Y') }} -
-                                        {{ \Carbon\Carbon::parse($paket->end_date)->format('d M Y') }}</span>
-                                </div>
-                                <div class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-clock mr-3 text-blue-500"></i>
-                                    <span>{{ \Carbon\Carbon::parse($paket->start_date)->diffInDays(\Carbon\Carbon::parse($paket->end_date)) + 1 }}
-                                        Hari</span>
-                                </div>
-                                <div class="flex items-center text-lg font-bold text-green-600">
-                                    <i class="fas fa-tag mr-3"></i>
-                                    <span>Rp {{ number_format($paket->price, 0, ',', '.') }} / orang</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Form Pemesanan -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Data Pemesanan</h3>
-
-                        <form action="{{ route('member.paket-wisata.store-pesan', $paket->id) }}" method="POST"
-                            enctype="multipart/form-data" id="pesanForm">
-                            @csrf
-
-                            <!-- Jumlah Orang -->
-                            <div class="mb-6">
-                                <label for="jumlah_orang" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-users mr-2"></i>Jumlah Orang
-                                </label>
-                                <input type="number" id="jumlah_orang" name="jumlah_orang"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('jumlah_orang') border-red-500 @enderror"
-                                    placeholder="Masukkan jumlah orang" value="{{ old('jumlah_orang', 1) }}" min="1"
-                                    max="50" oninput="hitungTotal()" onchange="hitungTotal()" onkeyup="hitungTotal()">
-                                @error('jumlah_orang')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Total Harga (Auto Calculate) -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-calculator mr-2"></i>Total Harga
-                                </label>
-                                <div class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-lg font-bold text-green-600"
-                                    id="totalHarga">
-                                    Rp {{ number_format($paket->price, 0, ',', '.') }}
-                                </div>
-                                <input type="hidden" id="total_harga_hidden" name="total_harga"
-                                    value="{{ $paket->price }}">
-                            </div>
-
-                            <!-- Bukti Bayar -->
-                            <div class="mb-6">
-                                <label for="bukti_bayar" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-upload mr-2"></i>Upload Bukti Bayar
-                                </label>
-                                <input type="file" id="bukti_bayar" name="bukti_bayar" accept="image/*"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('bukti_bayar') border-red-500 @enderror"
-                                    onchange="validateFile(this)">
-                                <p class="text-xs text-gray-500 mt-1">
-                                    Format: JPG, PNG, JPEG. Maksimal 2MB
-                                </p>
-                                @error('bukti_bayar')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Informasi Pembayaran -->
-                            <div class="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                                <h4 class="font-semibold text-blue-800 mb-2">
-                                    <i class="fas fa-info-circle mr-2"></i>Informasi Pembayaran
-                                </h4>
-                                <p class="text-sm text-blue-700">
-                                    Silahkan transfer ke rekening: <br>
-                                    <strong>Bank BCA: 1234567890</strong><br>
-                                    <strong>A.n: PT Wisata Nusantara</strong><br>
-                                    Kemudian upload bukti transfer di atas.
-                                </p>
-                            </div>
-
-                            <!-- Buttons -->
-                            <div class="flex space-x-4">
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary py-5 page-header">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-3 text-white animated slideInDown mb-4">Pesan Paket Wisata</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb text-uppercase mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('member.home') }}" class="text-white">Beranda</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('member.paket-wisata.index') }}" class="text-white">Paket Wisata</a>
+                            </li>
+                            <li class="breadcrumb-item">
                                 <a href="{{ route('member.paket-wisata.show', $paket->id) }}"
-                                    class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-600 transition duration-200 text-center">
-                                    <i class="fas fa-arrow-left mr-2"></i>
-                                    Kembali
-                                </a>
-                                <button type="submit"
-                                    class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition duration-200"
-                                    onclick="return validateForm()">
-                                    <i class="fas fa-check mr-2"></i>
-                                    Pesan Sekarang
-                                </button>
+                                    class="text-white">{{ $paket->title }}</a>
+                            </li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Pemesanan</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <!-- Booking Content -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="row g-5">
+                        <!-- Package Detail Card -->
+                        <div class="col-lg-6">
+                            <div class="card border-0 shadow h-100">
+                                <!-- Package Image -->
+                                <div class="position-relative">
+                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center"
+                                        style="height: 250px;">
+                                        @if ($paket->image_url)
+                                            <img src="{{ asset('storage/' . $paket->image_url) }}" alt="{{ $paket->title }}"
+                                                class="card-img-top" style="height: 250px; object-fit: cover;">
+                                        @else
+                                            <i class="fas fa-image text-white fa-4x opacity-50"></i>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="card-body p-4">
+                                    <h3 class="card-title mb-3 fw-bold">{{ $paket->title }}</h3>
+                                    <p class="card-text text-muted mb-4">{{ $paket->description }}</p>
+
+                                    <!-- Package Info -->
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                            <span
+                                                class="text-muted">{{ \Carbon\Carbon::parse($paket->start_date)->format('d M Y') }}
+                                                - {{ \Carbon\Carbon::parse($paket->end_date)->format('d M Y') }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-clock text-primary me-2"></i>
+                                            <span
+                                                class="text-muted">{{ \Carbon\Carbon::parse($paket->start_date)->diffInDays(\Carbon\Carbon::parse($paket->end_date)) + 1 }}
+                                                Hari</span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tag text-primary me-2"></i>
+                                            <span class="fw-bold text-success fs-5">Rp
+                                                {{ number_format($paket->price, 0, ',', '.') }} / orang</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Booking Form -->
+                        <div class="col-lg-6">
+                            <div class="card border-0 shadow h-100">
+                                <div class="card-body p-4">
+                                    <h3 class="card-title mb-4 fw-bold">Data Pemesanan</h3>
+
+                                    <form action="{{ route('member.paket-wisata.store-pesan', $paket->id) }}"
+                                        method="POST" enctype="multipart/form-data" id="pesanForm">
+                                        @csrf
+
+                                        <!-- Jumlah Orang -->
+                                        <div class="mb-4">
+                                            <label for="jumlah_orang" class="form-label fw-semibold">
+                                                <i class="fas fa-users me-2 text-primary"></i>Jumlah Orang
+                                            </label>
+                                            <input type="number" id="jumlah_orang" name="jumlah_orang"
+                                                class="form-control form-control-lg @error('jumlah_orang') is-invalid @enderror"
+                                                placeholder="Masukkan jumlah orang" value="{{ old('jumlah_orang', 1) }}"
+                                                min="1" max="50" oninput="hitungTotal()"
+                                                onchange="hitungTotal()" onkeyup="hitungTotal()">
+                                            @error('jumlah_orang')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Total Harga -->
+                                        <div class="mb-4">
+                                            <label class="form-label fw-semibold">
+                                                <i class="fas fa-calculator me-2 text-primary"></i>Total Harga
+                                            </label>
+                                            <div class="form-control form-control-lg bg-light fw-bold text-success fs-5"
+                                                id="totalHarga">
+                                                Rp {{ number_format($paket->price, 0, ',', '.') }}
+                                            </div>
+                                            <input type="hidden" id="total_harga_hidden" name="total_harga"
+                                                value="{{ $paket->price }}">
+                                        </div>
+
+                                        <!-- Bukti Bayar -->
+                                        <div class="mb-4">
+                                            <label for="bukti_bayar" class="form-label fw-semibold">
+                                                <i class="fas fa-upload me-2 text-primary"></i>Upload Bukti Bayar
+                                            </label>
+                                            <input type="file" id="bukti_bayar" name="bukti_bayar" accept="image/*"
+                                                class="form-control form-control-lg @error('bukti_bayar') is-invalid @enderror"
+                                                onchange="validateFile(this)">
+                                            <div class="form-text">Format: JPG, PNG, JPEG. Maksimal 2MB</div>
+                                            @error('bukti_bayar')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Informasi Pembayaran -->
+                                        <div class="alert alert-info border-0 shadow-sm mb-4">
+                                            <h6 class="alert-heading fw-bold">
+                                                <i class="fas fa-info-circle me-2"></i>Informasi Pembayaran
+                                            </h6>
+                                            <p class="mb-0 small">
+                                                Silahkan transfer ke rekening: <br>
+                                                <strong>Bank BCA: 1234567890</strong><br>
+                                                <strong>A.n: PT Wisata Nusantara</strong><br>
+                                                Kemudian upload bukti transfer di atas.
+                                            </p>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href="{{ route('member.paket-wisata.show', $paket->id) }}"
+                                                class="btn btn-secondary btn-lg flex-md-fill me-md-2">
+                                                <i class="fas fa-arrow-left me-2"></i>
+                                                Kembali
+                                            </a>
+                                            <button type="submit" class="btn btn-success btn-lg flex-md-fill"
+                                                onclick="return validateForm()">
+                                                <i class="fas fa-check me-2"></i>
+                                                Pesan Sekarang
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+@endsection
 
-    <!-- Script langsung di dalam HTML -->
+@push('scripts')
     <script>
         // Global variables
         const HARGA_PER_ORANG = {{ $paket->price }};
@@ -246,4 +277,31 @@
 
         console.log('=== SCRIPT INITIALIZATION COMPLETE ===');
     </script>
-@endsection
+@endpush
+
+@push('styles')
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .alert-info {
+            background-color: rgba(13, 202, 240, 0.1);
+            border-left: 4px solid #0dcaf0;
+        }
+    </style>
+@endpush

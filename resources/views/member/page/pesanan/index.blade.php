@@ -1,132 +1,125 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-purple-600 to-blue-700 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Pesanan Saya</h1>
-            <p class="text-xl mb-6 max-w-2xl mx-auto">
-                Kelola dan pantau status pesanan paket wisata Anda
-            </p>
+    <!-- Hero Section Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+        <div class="container py-5">
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Berita Terkini</h1>
+                    <p class="fs-4 text-white mb-4 animated slideInDown">Ikuti berita dan update terbaru seputar dunia
+                        pariwisata Indonesia</p>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+    <!-- Hero Section End -->
 
-    <!-- Pesanan Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
+    <!-- Berita Section Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
             @if (session('success'))
-                <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-                    <i class="fas fa-check-circle mr-2"></i>
+                <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
                     {{ session('success') }}
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
+                <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
                     {{ session('error') }}
                 </div>
             @endif
 
-            @if ($pesanan->count() > 0)
-                <div class="space-y-6">
-                    @foreach ($pesanan as $pesan)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                            <div class="md:flex">
-                                <!-- Image -->
-                                <div class="md:w-1/3 h-48 md:h-auto bg-gradient-to-r from-blue-400 to-purple-500 relative">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <img src="{{ asset('storage/' . $pesan->paketWisata->image_url) }}"
-                                            alt="{{ $pesan->paketWisata->image_url }}" class="w-full h-full object-cover">
-                                    </div>
-                                    <!-- Status Badge -->
-                                    <div class="absolute top-4 right-4">
-                                        @if ($pesan->status == 'pending')
-                                            <span
-                                                class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                <i class="fas fa-clock mr-1"></i>Pending
-                                            </span>
-                                        @elseif ($pesan->status == 'dibatalkan')
-                                            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                <i class="fas fa-times mr-1"></i>Dibatalkan
-                                            </span>
-                                        @elseif ($pesan->status == 'selesai')
-                                            <span
-                                                class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                <i class="fas fa-check mr-1"></i>Selesai
-                                            </span>
+            @if ($berita->count() > 0)
+                <div class="row g-4">
+                    @foreach ($berita as $item)
+                        <div class="col-lg-12 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="card border-0 shadow card-hover mb-4">
+                                <div class="row g-0">
+                                    <!-- Image -->
+                                    <div class="col-md-4 position-relative">
+                                        @if ($item->image_url)
+                                            <div class="position-relative overflow-hidden h-100">
+                                                <img src="{{ asset('storage/' . $item->image_url) }}"
+                                                    class="img-fluid w-100 h-100" alt="{{ $item->title }}"
+                                                    style="object-fit: cover; min-height: 200px;">
+                                            </div>
+                                        @else
+                                            <div class="bg-light d-flex align-items-center justify-content-center h-100"
+                                                style="min-height: 200px;">
+                                                <i class="fas fa-newspaper text-primary fa-3x opacity-50"></i>
+                                            </div>
                                         @endif
-                                    </div>
-                                </div>
 
-                                <!-- Content -->
-                                <div class="md:w-2/3 p-6">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h3 class="text-xl font-bold text-gray-800 mb-2">
-                                                {{ $pesan->paketWisata->title }}
-                                            </h3>
-                                            <p class="text-gray-600 text-sm mb-3">
-                                                ID Pesanan: #{{ str_pad($pesan->id, 6, '0', STR_PAD_LEFT) }}
+                                        <!-- Date Badge -->
+                                        <div class="position-absolute top-0 end-0 m-3">
+                                            <span class="badge bg-primary text-white px-3 py-2 rounded-pill shadow">
+                                                <i class="fa fa-calendar-alt me-1"></i>
+                                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="col-md-8">
+                                        <div class="card-body h-100 d-flex flex-column p-4">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div>
+                                                    <h3 class="card-title h4 mb-2 text-dark">{{ $item->title }}</h3>
+                                                    <p class="text-muted small mb-3">
+                                                        ID Berita: #{{ str_pad($item->id, 6, '0', STR_PAD_LEFT) }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Detail Berita -->
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <small class="text-muted d-flex align-items-center">
+                                                            <i class="fas fa-clock me-2 text-primary"
+                                                                style="width: 16px;"></i>
+                                                            {{ \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}
+                                                        </small>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <small class="text-muted d-flex align-items-center">
+                                                            <i class="fas fa-user me-2 text-primary"
+                                                                style="width: 16px;"></i>
+                                                            Admin
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <small class="text-muted d-flex align-items-center">
+                                                            <i class="fas fa-eye me-2 text-primary"
+                                                                style="width: 16px;"></i>
+                                                            Dipublikasi: {{ $item->created_at->format('d M Y H:i') }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Konten Preview -->
+                                            <p class="card-text flex-grow-1 text-muted mb-3 line-clamp-3">
+                                                {{ Str::limit(strip_tags($item->content), 200) }}
                                             </p>
-                                        </div>
-                                    </div>
 
-                                    <!-- Detail Pesanan -->
-                                    <div class="grid md:grid-cols-2 gap-4 mb-4">
-                                        <div class="space-y-2">
-                                            <div class="flex items-center text-sm text-gray-600">
-                                                <i class="fas fa-calendar-alt mr-3 text-blue-500 w-4"></i>
-                                                <span>{{ \Carbon\Carbon::parse($pesan->paketWisata->start_date)->format('d M Y') }}
-                                                    -
-                                                    {{ \Carbon\Carbon::parse($pesan->paketWisata->end_date)->format('d M Y') }}</span>
-                                            </div>
-                                            <div class="flex items-center text-sm text-gray-600">
-                                                <i class="fas fa-users mr-3 text-blue-500 w-4"></i>
-                                                <span>{{ $pesan->jumlah_orang }} Orang</span>
+                                            <!-- Actions -->
+                                            <div class="d-flex gap-2 mt-auto">
+                                                <a href="{{ route('member.berita.show', $item->id) }}"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-eye me-2"></i>
+                                                    Baca Selengkapnya
+                                                </a>
+                                                <button class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-share-alt me-2"></i>
+                                                    Bagikan
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center text-sm text-gray-600">
-                                                <i class="fas fa-clock mr-3 text-blue-500 w-4"></i>
-                                                <span>Dipesan: {{ $pesan->created_at->format('d M Y H:i') }}</span>
-                                            </div>
-                                            <div class="flex items-center text-lg font-bold text-green-600">
-                                                <i class="fas fa-money-bill-wave mr-3 w-4"></i>
-                                                <span>Rp {{ number_format($pesan->total_harga, 0, ',', '.') }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Bukti Bayar -->
-                                    @if ($pesan->bukti_bayar)
-                                        <div class="mb-4">
-                                            <p class="text-sm text-gray-600 mb-2">
-                                                <i class="fas fa-receipt mr-2"></i>Bukti Bayar:
-                                            </p>
-                                            <a href="{{ asset('storage/' . $pesan->bukti_bayar) }}" target="_blank"
-                                                class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm">
-                                                <i class="fas fa-eye mr-2"></i>
-                                                Lihat Bukti Bayar
-                                            </a>
-                                        </div>
-                                    @endif
-
-
-                                    <!-- Actions -->
-                                    <div class="flex space-x-3">
-                                        <a href="{{ route('member.paket-wisata.show', $pesan->paketWisata->id) }}"
-                                            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition duration-200">
-                                            <i class="fas fa-info-circle mr-2"></i>
-                                            Detail Paket
-                                        </a>
-
-                                        @if ($pesan->status == 'selesai')
-                                            <button
-                                                class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition duration-200">
-                                                <i class="fas fa-star mr-2"></i>
-                                                Beri Ulasan
-                                            </button>
-                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -135,19 +128,74 @@
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-16">
-                    <div class="mb-6">
-                        <i class="fas fa-shopping-cart text-6xl text-gray-300"></i>
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-newspaper text-muted" style="font-size: 4rem;"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-600 mb-4">Belum Ada Pesanan</h3>
-                    <p class="text-gray-500 mb-6">Anda belum memiliki pesanan paket wisata.</p>
-                    <a href="{{ route('member.paket-wisata.index') }}"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-                        <i class="fas fa-search mr-2"></i>
-                        Jelajahi Paket Wisata
-                    </a>
+                    <h3 class="h4 text-muted mb-4">Belum Ada Berita</h3>
+                    <p class="text-muted mb-4">
+                        @if (request('search'))
+                            Tidak ditemukan berita dengan kata kunci "{{ request('search') }}"
+                        @else
+                            Maaf, saat ini belum ada berita yang tersedia.
+                        @endif
+                    </p>
+                    @if (request('search'))
+                        <a href="{{ route('member.berita.index') }}" class="btn btn-primary rounded-pill py-3 px-5">
+                            <i class="fas fa-search me-2"></i>
+                            Lihat Semua Berita
+                        </a>
+                    @else
+                        <a href="{{ route('member.home') }}" class="btn btn-primary rounded-pill py-3 px-5">
+                            <i class="fas fa-home me-2"></i>
+                            Kembali ke Beranda
+                        </a>
+                    @endif
                 </div>
             @endif
         </div>
-    </section>
+    </div>
+    <!-- Berita Section End -->
 @endsection
+
+@push('styles')
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .hero-header {
+            background: linear-gradient(rgba(19, 53, 123, 0.8), rgba(19, 53, 123, 0.8)), url('assets/img/carousel-2.jpg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .btn {
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+@endpush
