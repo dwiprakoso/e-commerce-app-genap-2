@@ -17,6 +17,7 @@ Route::get('/login', function () {
 })->name('login');
 // Member Routes (Public)
 Route::get('/', [MemberDashboardController::class, 'home'])->name('member.home');
+Route::get('/test-view', [MemberDashboardController::class, 'indexTest'])->name('member.index.test');
 
 // Member Auth Routes
 Route::prefix('member')->group(function () {

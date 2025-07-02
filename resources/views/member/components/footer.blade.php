@@ -1,58 +1,38 @@
-<!-- Footer -->
-<footer class="bg-gray-800 text-white py-12">
-    <div class="container mx-auto px-4">
-        <div class="grid md:grid-cols-4 gap-8">
-            <div>
-                <div class="flex items-center space-x-2 mb-4">
-                    <i class="fas fa-mountain text-blue-400 text-2xl"></i>
-                    <span class="text-xl font-bold">Wisata Nusantara</span>
-                </div>
-                <p class="text-gray-400">
-                    Menjelajahi keindahan Indonesia dengan pengalaman wisata yang tak terlupakan
-                </p>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">Menu</h4>
-                <ul class="space-y-2 text-gray-400">
-                    <li><a href="{{ route('member.home') }}" class="hover:text-white transition">Beranda</a></li>
-                    <li><a href="{{ route('member.paket-wisata.index') }}" class="hover:text-white transition">Paket
-                            Wisata</a></li>
-                    <li><a href="{{ route('member.galeri.index') }}" class="hover:text-white transition">Galeri</a></li>
-                    <li><a href="{{ route('member.berita.index') }}" class="hover:text-white transition">Berita</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">Kontak</h4>
-                <ul class="space-y-2 text-gray-400">
-                    <li><i class="fas fa-phone mr-2"></i> +62 123 456 789</li>
-                    <li><i class="fas fa-envelope mr-2"></i> info@wisatanusantara.com</li>
-                    <li><i class="fas fa-map-marker-alt mr-2"></i> Jakarta, Indonesia</li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-semibold mb-4">Ikuti Kami</h4>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-facebook text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-instagram text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-twitter text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-youtube text-xl"></i>
-                    </a>
+<!-- Footer Start -->
+<div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-3 col-md-6">
+                <div class="footer-item">
+                    <h4 class="text-white mb-3">Wisata Nusantara</h4>
+                    <p class="mb-4">Menjelajahi keindahan Indonesia dengan pengalaman wisata yang tak terlupakan.
+                        Kami hadir untuk memberikan pelayanan terbaik dalam setiap perjalanan Anda.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 Wisata Nusantara. All rights reserved.</p>
+            <div class="col-lg-3 col-md-6">
+                <div class="footer-item">
+                    <h4 class="text-white mb-3">Menu Utama</h4>
+                    <a href="{{ route('member.home') }}" class="btn btn-link text-light">Beranda</a>
+                    <a href="{{ route('member.paket-wisata.index') }}" class="btn btn-link text-light">Paket
+                        Wisata</a>
+                    <a href="{{ route('member.galeri.index') }}" class="btn btn-link text-light">Galeri</a>
+                    <a href="{{ route('member.video.index') }}" class="btn btn-link text-light">Video</a>
+                    <a href="{{ route('member.berita.index') }}" class="btn btn-link text-light">Berita</a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="footer-item">
+                    <h4 class="text-white mb-3">Hubungi Kami</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Jakarta, Indonesia</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+62 123 456 789</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@wisatanusantara.com</p>
+                    <div class="d-flex pt-2">
+                        <small class="text-light">Senin - Jumat: 08:00 - 17:00</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</footer>
+
+</div>
+<!-- Footer End -->

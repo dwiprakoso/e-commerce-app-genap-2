@@ -57,6 +57,52 @@ class DashboardController extends Controller
             'paketPopuler'
         ));
     }
+    public function indexTest()
+    {
+        // Paket Wisata Terbaru (6 items untuk showcase)
+        $paketWisata = PaketWisata::where('status', 'aktif')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
+        // Berita Terbaru (3 items untuk preview)
+        $berita = Berita::orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        // Video Terbaru (3 items untuk preview)
+        $videos = Video::orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        // Gallery Terbaru (6 items untuk showcase visual)
+        $galleries = Gallery::orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
+        // Statistik untuk menunjukkan kredibilitas
+        $stats = [
+            'total_paket' => PaketWisata::where('status', 'aktif')->count(),
+            'total_berita' => Berita::count(),
+            'total_video' => Video::count(),
+            'total_gallery' => Gallery::count()
+        ];
+
+        // Paket Wisata Populer/Terlaris (berdasarkan created_at atau bisa ditambah field popularity)
+        $paketPopuler = PaketWisata::where('status', 'aktif')
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+
+        return view('member.page.index', compact(
+            'paketWisata',
+            'berita',
+            'videos',
+            'galleries',
+            'stats',
+            'paketPopuler'
+        ));
+    }
 
     public function paketWisata(Request $request)
     {
