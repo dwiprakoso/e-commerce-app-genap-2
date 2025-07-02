@@ -1,42 +1,47 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-purple-600 to-pink-700 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Galeri Foto</h1>
-            <p class="text-xl mb-6 max-w-2xl mx-auto">
-                Koleksi foto-foto indah dari berbagai destinasi wisata di Indonesia
-            </p>
+    <!-- Hero Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+        <div class="container py-5">
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Galeri Foto</h1>
+                    <p class="fs-4 text-white mb-4 animated slideInDown">Koleksi foto-foto indah dari berbagai destinasi
+                        wisata di Indonesia</p>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+    <!-- Hero Header End -->
 
-    <!-- Gallery Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
+    <!-- Gallery Section Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
             @if ($galleries->count() > 0)
-                <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="row g-4">
                     @foreach ($galleries as $item)
-                        <div class="group cursor-pointer" onclick="openModal('{{ $item->id }}')">
-                            <div
-                                class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform group-hover:scale-105">
+                        <div class="col-lg-3 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="gallery-item rounded overflow-hidden shadow card-hover" style="cursor: pointer;"
+                                onclick="openModal('{{ $item->id }}')">
                                 <!-- Image -->
-                                <div
-                                    class="aspect-square bg-gradient-to-r from-purple-400 to-pink-500 relative overflow-hidden">
+                                <div class="position-relative"
+                                    style="height: 250px; background: linear-gradient(135deg, #6c63ff, #ff6b9d);">
                                     @if ($item->image_url)
                                         <img src="{{ asset('storage/' . $item->image_url) }}" alt="{{ $item->caption }}"
-                                            class="w-full h-full object-cover transition duration-300 group-hover:scale-110">
+                                            class="img-fluid w-100 h-100"
+                                            style="object-fit: cover; transition: transform 0.3s ease;">
                                     @else
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <i class="fas fa-image text-white fa-3x" style="opacity: 0.5;"></i>
                                         </div>
                                     @endif
                                 </div>
 
                                 <!-- Caption -->
                                 @if ($item->caption)
-                                    <div class="p-4">
-                                        <p class="text-gray-700 text-sm line-clamp-2">{{ $item->caption }}</p>
-                                        <p class="text-gray-500 text-xs mt-2">
+                                    <div class="p-3 bg-white">
+                                        <p class="text-muted mb-1 small text-truncate-2">{{ $item->caption }}</p>
+                                        <p class="text-secondary mb-0" style="font-size: 0.75rem;">
                                             {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</p>
                                     </div>
                                 @endif
@@ -46,43 +51,48 @@
                 </div>
 
                 <!-- Lightbox Modal -->
-                <div id="lightboxModal"
-                    class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden items-center justify-center p-4">
-                    <div class="relative max-w-4xl max-h-full">
-                        <!-- Close Button -->
-                        <button onclick="closeModal()"
-                            class="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300">
-                            <i class="fas fa-times"></i>
-                        </button>
+                <div class="modal fade" id="lightboxModal" tabindex="-1" style="background: rgba(0,0,0,0.95);">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content bg-transparent border-0">
+                            <div class="modal-header border-0 pb-0">
+                                <button type="button" class="btn-close btn-close-white" onclick="closeModal()"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0 position-relative">
+                                <!-- Image Container -->
+                                <div class="text-center position-relative">
+                                    <img id="modalImage" src="" alt="" class="img-fluid"
+                                        style="max-height: 80vh; object-fit: contain;">
 
-                        <!-- Image Container -->
-                        <div id="modalImageContainer" class="relative">
-                            <img id="modalImage" src="" alt=""
-                                class="max-w-full max-h-screen object-contain">
+                                    <!-- Navigation -->
+                                    <button type="button"
+                                        class="btn position-absolute top-50 start-0 translate-middle-y ms-3"
+                                        onclick="prevImage()"
+                                        style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button type="button"
+                                        class="btn position-absolute top-50 end-0 translate-middle-y me-3"
+                                        onclick="nextImage()"
+                                        style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
 
-                            <!-- Navigation -->
-                            <button onclick="prevImage()"
-                                class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-gray-300">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button onclick="nextImage()"
-                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-gray-300">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                                <!-- Caption -->
+                                <div id="modalCaption" class="text-white text-center mt-3 px-4"></div>
+                            </div>
                         </div>
-
-                        <!-- Caption -->
-                        <div id="modalCaption" class="text-white text-center mt-4 px-4"></div>
                     </div>
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-16">
-                    <div class="mb-6">
-                        <i class="fas fa-images text-6xl text-gray-300"></i>
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-images text-muted fa-5x"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-600 mb-4">Belum Ada Foto</h3>
-                    <p class="text-gray-500 mb-6">
+                    <h3 class="h3 text-muted mb-3">Belum Ada Foto</h3>
+                    <p class="text-muted mb-4">
                         @if (request('search'))
                             Tidak ditemukan foto dengan kata kunci "{{ request('search') }}"
                         @else
@@ -90,33 +100,68 @@
                         @endif
                     </p>
                     @if (request('search'))
-                        <a href="{{ route('member.galeri.index') }}"
-                            class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                        <a href="{{ route('member.galeri.index') }}" class="btn btn-primary rounded-pill py-3 px-5">
                             Lihat Semua Foto
                         </a>
                     @else
-                        <a href="{{ route('member.home') }}"
-                            class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                        <a href="{{ route('member.home') }}" class="btn btn-primary rounded-pill py-3 px-5">
                             Kembali ke Beranda
                         </a>
                     @endif
                 </div>
             @endif
         </div>
-    </section>
+    </div>
+    <!-- Gallery Section End -->
 @endsection
 
 @push('styles')
     <style>
-        .line-clamp-2 {
+        .text-truncate-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .aspect-square {
-            aspect-ratio: 1 / 1;
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        #lightboxModal {
+            display: none;
+        }
+
+        #lightboxModal.show {
+            display: flex !important;
         }
     </style>
 @endpush
@@ -140,16 +185,16 @@
                 modalImage.alt = gallery.caption || '';
                 modalCaption.textContent = gallery.caption || '';
 
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                modal.style.display = 'flex';
+                modal.classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
         }
 
         function closeModal() {
             const modal = document.getElementById('lightboxModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
             document.body.style.overflow = 'auto';
         }
 

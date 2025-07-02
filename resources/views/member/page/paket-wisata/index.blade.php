@@ -1,70 +1,82 @@
 @extends('member.layouts.app')
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Paket Wisata Terbaik</h1>
-            <p class="text-xl mb-6 max-w-2xl mx-auto">
-                Pilih paket wisata impian Anda dan nikmati pengalaman tak terlupakan di Indonesia
-            </p>
+    <!-- Hero Header Start -->
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+        <div class="container py-5">
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Paket Wisata Terbaik</h1>
+                    <p class="fs-4 text-white mb-4 animated slideInDown">Pilih paket wisata impian Anda dan nikmati
+                        pengalaman tak terlupakan di Indonesia</p>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+    <!-- Hero Header End -->
 
-
-    <!-- Paket Wisata Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
+    <!-- Paket Wisata Section Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
             @if ($paketWisata->count() > 0)
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="row g-4">
                     @foreach ($paketWisata as $paket)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
-                            <div class="h-48 bg-gradient-to-r from-blue-400 to-purple-500 relative overflow-hidden">
-                                @if ($paket->image_url)
-                                    <img src="{{ asset('storage/' . $paket->image_url) }}" alt="{{ $paket->title }}"
-                                        class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center">
-                                        <i class="fas fa-image text-6xl text-white/50"></i>
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="card border-0 shadow card-hover h-100">
+                                <!-- Image -->
+                                <div class="position-relative"
+                                    style="height: 250px; background: linear-gradient(135deg, #007bff, #6f42c1);">
+                                    @if ($paket->image_url)
+                                        <img src="{{ asset('storage/' . $paket->image_url) }}" alt="{{ $paket->title }}"
+                                            class="card-img-top w-100 h-100" style="object-fit: cover;">
+                                    @else
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <i class="fas fa-image text-white fa-4x" style="opacity: 0.5;"></i>
+                                        </div>
+                                    @endif
+
+                                    <!-- Price Badge -->
+                                    <div class="position-absolute bottom-0 start-0 m-3">
+                                        <span class="badge bg-white text-primary fs-6 fw-bold py-2 px-3 shadow">
+                                            Rp {{ number_format($paket->price, 0, ',', '.') }}
+                                        </span>
                                     </div>
-                                @endif
-
-                                <!-- Price Badge -->
-                                <div class="absolute bottom-4 left-4">
-                                    <span class="bg-white text-blue-600 px-3 py-2 rounded-lg font-bold text-lg shadow-md">
-                                        Rp {{ number_format($paket->price, 0, ',', '.') }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-800 mb-3">{{ $paket->title }}</h3>
-                                <p class="text-gray-600 mb-4 line-clamp-3">{{ $paket->description }}</p>
-
-                                <!-- Date Info -->
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <i class="fas fa-calendar-alt mr-2"></i>
-                                    <span>{{ \Carbon\Carbon::parse($paket->start_date)->format('d M Y') }} -
-                                        {{ \Carbon\Carbon::parse($paket->end_date)->format('d M Y') }}</span>
                                 </div>
 
-                                <!-- Duration -->
-                                <div class="flex items-center text-sm text-gray-500 mb-6">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    <span>{{ \Carbon\Carbon::parse($paket->start_date)->diffInDays(\Carbon\Carbon::parse($paket->end_date)) + 1 }}
-                                        Hari</span>
-                                </div>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <h5 class="card-title mb-3">{{ $paket->title }}</h5>
+                                    <p class="card-text flex-grow-1 text-truncate-3">{{ $paket->description }}</p>
 
-                                <!-- Action Buttons -->
-                                <div class="flex space-x-3">
-                                    <a href="{{ route('member.paket-wisata.show', $paket->id) }}"
-                                        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition duration-200 text-center">
-                                        <i class="fas fa-info-circle mr-2"></i>
-                                        Detail
-                                    </a>
-                                    <a href="{{ route('member.paket-wisata.pesan', $paket->id) }}"
-                                        class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition duration-200 text-center">
-                                        <i class="fas fa-shopping-cart mr-2"></i>
-                                        Pesan
-                                    </a>
+                                    <!-- Date Info -->
+                                    <div class="d-flex align-items-center text-muted small mb-3">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        <span>{{ \Carbon\Carbon::parse($paket->start_date)->format('d M Y') }} -
+                                            {{ \Carbon\Carbon::parse($paket->end_date)->format('d M Y') }}</span>
+                                    </div>
+
+                                    <!-- Duration -->
+                                    <div class="d-flex align-items-center text-muted small mb-4">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <span>{{ \Carbon\Carbon::parse($paket->start_date)->diffInDays(\Carbon\Carbon::parse($paket->end_date)) + 1 }}
+                                            Hari</span>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="row g-2 mt-auto">
+                                        <div class="col-6">
+                                            <a href="{{ route('member.paket-wisata.show', $paket->id) }}"
+                                                class="btn btn-primary w-100">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Detail
+                                            </a>
+                                        </div>
+                                        <div class="col-6">
+                                            <a href="{{ route('member.paket-wisata.pesan', $paket->id) }}"
+                                                class="btn btn-success w-100">
+                                                <i class="fas fa-shopping-cart me-1"></i>
+                                                Pesan
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -72,29 +84,38 @@
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-16">
-                    <div class="mb-6">
-                        <i class="fas fa-map-marked-alt text-6xl text-gray-300"></i>
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-map-marked-alt text-muted fa-5x"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-600 mb-4">Belum Ada Paket Wisata</h3>
-                    <p class="text-gray-500 mb-6">Maaf, saat ini belum ada paket wisata yang tersedia.</p>
-                    <a href="{{ route('member.home') }}"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                    <h3 class="h3 text-muted mb-3">Belum Ada Paket Wisata</h3>
+                    <p class="text-muted mb-4">Maaf, saat ini belum ada paket wisata yang tersedia.</p>
+                    <a href="{{ route('member.home') }}" class="btn btn-primary rounded-pill py-3 px-5">
                         Kembali ke Beranda
                     </a>
                 </div>
             @endif
         </div>
-    </section>
+    </div>
+    <!-- Paket Wisata Section End -->
 @endsection
 
 @push('styles')
     <style>
-        .line-clamp-3 {
+        .text-truncate-3 {
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
     </style>
 @endpush
