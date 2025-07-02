@@ -137,7 +137,7 @@
                                             <p class="mb-0 small">
                                                 Silahkan transfer ke rekening: <br>
                                                 <strong>Bank BCA: 1234567890</strong><br>
-                                                <strong>A.n: PT Wisata Nusantara</strong><br>
+                                                <strong>A.n: PT NearMe</strong><br>
                                                 Kemudian upload bukti transfer di atas.
                                             </p>
                                         </div>

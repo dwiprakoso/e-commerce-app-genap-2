@@ -5,7 +5,7 @@
     <base href="{{ url('/') }}/" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Wisata Nusantara - Jelajahi Keindahan Indonesia</title>
+    <title>NearMe - Jelajahi Keindahan Indonesia</title>
 
     <!-- Google Fonts (sesuai Travela) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

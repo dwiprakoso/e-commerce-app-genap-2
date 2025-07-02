@@ -4,7 +4,7 @@
         <div class="row g-5">
             <div class="col-lg-6 col-md-6">
                 <div class="footer-item">
-                    <h4 class="text-white mb-3">Wisata Nusantara</h4>
+                    <h4 class="text-white mb-3">NearMe</h4>
                     <p class="mb-4">Menjelajahi keindahan Indonesia dengan pengalaman wisata yang tak terlupakan.
                         Kami hadir untuk memberikan pelayanan terbaik dalam setiap perjalanan Anda.</p>
                     <div class="d-flex pt-2">
@@ -58,7 +58,7 @@
                         </div>
                         <div class="d-flex align-items-center mb-2">
                             <i class="fa fa-envelope me-3 text-primary"></i>
-                            <span>info@wisatanusantara.com</span>
+                            <span>info@nearme.com</span>
                         </div>
                         <div class="d-flex align-items-center">
                             <i class="fa fa-clock me-3 text-primary"></i>

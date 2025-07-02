@@ -2,7 +2,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Wisata Nusantara 2025</span>
+            <span>Copyright &copy; NearMe 2025</span>
         </div>
     </div>
 </footer>

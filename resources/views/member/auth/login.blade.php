@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Wisata Nusantara</title>
+    <title>Login - NearMe</title>
     <!-- SB Admin 2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css"
         rel="stylesheet">
@@ -13,7 +13,7 @@
     <style>
         /* Minimal custom CSS - only for tourism theme branding */
         /* .bg-login-image {
-            background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1000 600%22><rect fill=%22%234e73df%22 width=%221000%22 height=%22600%22/><g><circle cx=%22200%22 cy=%22150%22 r=%2240%22 fill=%22%23ffd700%22/><polygon points=%22300,400 350,320 400,400%22 fill=%22%2328a745%22/><polygon points=%22500,350 550,250 600,350%22 fill=%22%2328a745%22/><polygon points=%22700,380 750,280 800,380%22 fill=%22%2328a745%22/><rect x=%22100%22 y=%22450%22 width=%22800%22 height=%22100%22 fill=%22%2317a2b8%22/><text x=%22500%22 y=%22520%22 font-family=%22Arial%22 font-size=%2236%22 fill=%22white%22 text-anchor=%22middle%22>🏔️ Wisata Nusantara</text></g></svg>') center/cover;
+            background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1000 600%22><rect fill=%22%234e73df%22 width=%221000%22 height=%22600%22/><g><circle cx=%22200%22 cy=%22150%22 r=%2240%22 fill=%22%23ffd700%22/><polygon points=%22300,400 350,320 400,400%22 fill=%22%2328a745%22/><polygon points=%22500,350 550,250 600,350%22 fill=%22%2328a745%22/><polygon points=%22700,380 750,280 800,380%22 fill=%22%2328a745%22/><rect x=%22100%22 y=%22450%22 width=%22800%22 height=%22100%22 fill=%22%2317a2b8%22/><text x=%22500%22 y=%22520%22 font-family=%22Arial%22 font-size=%2236%22 fill=%22white%22 text-anchor=%22middle%22>🏔️ NearMe</text></g></svg>') center/cover;
         } */
 
         /* Custom button styling following SB Admin 2 patterns */

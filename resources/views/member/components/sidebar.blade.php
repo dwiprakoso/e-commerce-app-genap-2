@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0 shadow-sm">
         <a href="{{ route('member.home') }}" class="navbar-brand p-0 d-flex align-items-center">
             <i class="fa fa-map-marker-alt me-3 text-primary fs-1 brand-icon"></i>
-            <h1 class="m-0 text-primary brand-text" style="font-family: 'Jost', sans-serif;">Wisata Nusantara</h1>
+            <h1 class="m-0 text-primary brand-text" style="font-family: 'Jost', sans-serif;">NearMe</h1>
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars text-primary"></span>
