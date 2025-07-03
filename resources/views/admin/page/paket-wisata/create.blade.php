@@ -33,15 +33,23 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="form-group">
-                            <label for="image">Gambar Paket</label>
+                            <label for="image">Gambar Paket <span class="text-danger">*</span></label>
                             <input type="file" name="image"
                                 class="form-control-file @error('image') is-invalid @enderror" id="image"
-                                accept="image/*">
-                            <small class="form-text text-muted">Format: jpeg, png, jpg, gif. Maksimal 2MB.</small>
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" required>
+                            <small class="form-text text-muted">
+                                <strong>Persyaratan gambar:</strong><br>
+                                • Format: JPEG, PNG, JPG, GIF, WebP<br>
+                                • Ukuran maksimal: 2MB<br>
+                                • Resolusi minimal: 800x600 pixel<br>
+                                • Resolusi maksimal: 4000x4000 pixel
+                            </small>
                             @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <div id="imageError" class="text-danger mt-2" style="display: none;"></div>
                         </div>
 
                         <div class="form-group">
@@ -102,13 +110,20 @@
                                 <img id="preview" src="#" alt="Preview" class="img-thumbnail"
                                     style="max-width: 300px;">
                             </div>
+                            <div id="imageInfo" class="mt-2">
+                                <small class="text-muted">
+                                    <span id="fileName"></span><br>
+                                    <span id="fileSize"></span><br>
+                                    <span id="fileDimensions"></span>
+                                </small>
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <a href="{{ route('admin.paket-wisata.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <i class="fas fa-save"></i> Simpan
                             </button>
                         </div>
@@ -122,17 +137,145 @@
     </div>
     <!-- End of Main Content -->
     <script>
-        // Preview image before upload
+        // Configuration for image validation
+        const imageConfig = {
+            maxSize: 2 * 1024 * 1024, // 2MB in bytes
+            allowedTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'],
+            minWidth: 800,
+            minHeight: 600,
+            maxWidth: 4000,
+            maxHeight: 4000
+        };
+
+        // Function to format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Function to validate image
+        function validateImage(file) {
+            return new Promise((resolve, reject) => {
+                // Check file type
+                if (!imageConfig.allowedTypes.includes(file.type)) {
+                    reject('Format file tidak didukung. Hanya diperbolehkan: JPEG, PNG, JPG, GIF, WebP');
+                    return;
+                }
+
+                // Check file size
+                if (file.size > imageConfig.maxSize) {
+                    reject(`Ukuran file terlalu besar. Maksimal ${formatFileSize(imageConfig.maxSize)}`);
+                    return;
+                }
+
+                // Check file is not corrupted and get dimensions
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+
+                img.onload = function() {
+                    URL.revokeObjectURL(url);
+
+                    // Check dimensions
+                    if (this.width < imageConfig.minWidth || this.height < imageConfig.minHeight) {
+                        reject(
+                            `Resolusi gambar terlalu kecil. Minimal ${imageConfig.minWidth}x${imageConfig.minHeight} pixel`);
+                        return;
+                    }
+
+                    if (this.width > imageConfig.maxWidth || this.height > imageConfig.maxHeight) {
+                        reject(
+                            `Resolusi gambar terlalu besar. Maksimal ${imageConfig.maxWidth}x${imageConfig.maxHeight} pixel`);
+                        return;
+                    }
+
+                    // All validations passed
+                    resolve({
+                        width: this.width,
+                        height: this.height,
+                        size: file.size,
+                        name: file.name,
+                        type: file.type
+                    });
+                };
+
+                img.onerror = function() {
+                    URL.revokeObjectURL(url);
+                    reject('File gambar corrupt atau tidak valid');
+                };
+
+                img.src = url;
+            });
+        }
+
+        // Function to show error message
+        function showImageError(message) {
+            const errorDiv = document.getElementById('imageError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+
+            // Add is-invalid class to input
+            document.getElementById('image').classList.add('is-invalid');
+
+            // Hide preview
+            document.getElementById('imagePreview').style.display = 'none';
+
+            // Disable submit button
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        // Function to clear error message
+        function clearImageError() {
+            const errorDiv = document.getElementById('imageError');
+            errorDiv.style.display = 'none';
+
+            // Remove is-invalid class from input
+            document.getElementById('image').classList.remove('is-invalid');
+
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        // Function to show image preview and info
+        function showImagePreview(file, imageInfo) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('fileName').textContent = `Nama: ${imageInfo.name}`;
+                document.getElementById('fileSize').textContent = `Ukuran: ${formatFileSize(imageInfo.size)}`;
+                document.getElementById('fileDimensions').textContent =
+                    `Dimensi: ${imageInfo.width}x${imageInfo.height} pixel`;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Image upload validation
         document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('preview').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+
+            if (!file) {
+                document.getElementById('imagePreview').style.display = 'none';
+                clearImageError();
+                return;
             }
+
+            // Show loading state
+            document.getElementById('submitBtn').disabled = true;
+
+            // Validate image
+            validateImage(file)
+                .then(imageInfo => {
+                    clearImageError();
+                    showImagePreview(file, imageInfo);
+                })
+                .catch(error => {
+                    showImageError(error);
+                    // Clear the input
+                    e.target.value = '';
+                });
         });
 
         // Set minimum date to today for start_date (hanya untuk create)
@@ -156,7 +299,7 @@
             document.getElementById('end_date').min = currentStartDate;
         }
 
-        // Price input handling - PERBAIKAN UTAMA
+        // Price input handling
         const priceInput = document.getElementById('price');
         let isFormatting = false;
 
@@ -204,8 +347,16 @@
             }
         });
 
-        // Remove formatting before form submission
+        // Form submission validation
         document.querySelector('form').addEventListener('submit', function(e) {
+            // Check if image validation passed
+            if (document.getElementById('imageError').style.display === 'block') {
+                e.preventDefault();
+                alert('Mohon perbaiki error pada gambar sebelum submit form');
+                return false;
+            }
+
+            // Remove price formatting before submission
             const priceInput = document.getElementById('price');
             const numericValue = priceInput.value.replace(/\D/g, '');
             priceInput.value = numericValue;
