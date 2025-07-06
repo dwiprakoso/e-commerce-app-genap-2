@@ -425,9 +425,36 @@
             }
         }
 
+        // Auto submit when both dates are selected (for custom period only)
+        function handleDateChange() {
+            const period = document.getElementById('period').value;
+            const dateFromInput = document.getElementById('date_from');
+            const dateToInput = document.getElementById('date_to');
+
+            // Only auto-submit if period is custom and both dates are filled
+            if (period === 'custom' && dateFromInput.value && dateToInput.value) {
+                // Add small delay to ensure both dates are properly set
+                setTimeout(() => {
+                    document.getElementById('filterForm').submit();
+                }, 100);
+            }
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             handlePeriodChange();
+
+            // Add event listeners for date inputs
+            const dateFromInput = document.getElementById('date_from');
+            const dateToInput = document.getElementById('date_to');
+
+            if (dateFromInput) {
+                dateFromInput.addEventListener('change', handleDateChange);
+            }
+
+            if (dateToInput) {
+                dateToInput.addEventListener('change', handleDateChange);
+            }
         });
 
         // Chart.js for Monthly Revenue
