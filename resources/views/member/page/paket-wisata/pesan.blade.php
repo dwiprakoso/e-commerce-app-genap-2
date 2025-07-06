@@ -84,7 +84,7 @@
                                     <h3 class="card-title mb-4 fw-bold">Data Pemesanan</h3>
 
                                     <form action="{{ route('member.paket-wisata.store-pesan', $paket->id) }}"
-                                        method="POST" enctype="multipart/form-data" id="pesanForm">
+                                        method="POST" id="pesanForm" enctype="multipart/form-data">
                                         @csrf
 
                                         <!-- Jumlah Orang -->
@@ -115,15 +115,20 @@
                                                 value="{{ $paket->price }}">
                                         </div>
 
-                                        <!-- Bukti Bayar -->
+                                        <!-- Upload Bukti Bayar (Opsional) -->
                                         <div class="mb-4">
                                             <label for="bukti_bayar" class="form-label fw-semibold">
-                                                <i class="fas fa-upload me-2 text-primary"></i>Upload Bukti Bayar
+                                                <i class="fas fa-receipt me-2 text-primary"></i>Bukti Pembayaran
+                                                <span class="text-muted">(Opsional)</span>
                                             </label>
-                                            <input type="file" id="bukti_bayar" name="bukti_bayar" accept="image/*"
-                                                class="form-control form-control-lg @error('bukti_bayar') is-invalid @enderror"
-                                                onchange="validateFile(this)">
-                                            <div class="form-text">Format: JPG, PNG, JPEG. Maksimal 2MB</div>
+                                            <input type="file" id="bukti_bayar" name="bukti_bayar"
+                                                class="form-control @error('bukti_bayar') is-invalid @enderror"
+                                                accept="image/*">
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Format: JPG, PNG, JPEG. Maksimal 2MB. Jika tidak diupload sekarang,
+                                                dapat diupload nanti di halaman "Pesanan Saya".
+                                            </div>
                                             @error('bukti_bayar')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -135,10 +140,11 @@
                                                 <i class="fas fa-info-circle me-2"></i>Informasi Pembayaran
                                             </h6>
                                             <p class="mb-0 small">
-                                                Silahkan transfer ke rekening: <br>
+                                                Transfer ke rekening: <br>
                                                 <strong>Bank BCA: 1234567890</strong><br>
                                                 <strong>A.n: PT NearMe</strong><br>
-                                                Kemudian upload bukti transfer di atas.
+                                                <span class="text-muted">Bukti pembayaran dapat diupload sekarang atau nanti
+                                                    di halaman "Pesanan Saya".</span>
                                             </p>
                                         </div>
 
@@ -220,35 +226,9 @@
             console.log('Display updated:', displayTotal.textContent);
         }
 
-        // Fungsi validasi file
-        function validateFile(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            console.log('File selected:', file.name, file.size, file.type);
-
-            // Validasi ukuran (2MB)
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Ukuran file terlalu besar! Maksimal 2MB.');
-                input.value = '';
-                return;
-            }
-
-            // Validasi tipe file
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Format file tidak didukung! Gunakan JPG, JPEG, atau PNG.');
-                input.value = '';
-                return;
-            }
-
-            console.log('File validation passed!');
-        }
-
         // Fungsi validasi form
         function validateForm() {
             const jumlahOrang = parseInt(document.getElementById('jumlah_orang').value);
-            const buktiFile = document.getElementById('bukti_bayar').files[0];
 
             if (!jumlahOrang || jumlahOrang < 1) {
                 alert('Jumlah orang minimal 1!');
@@ -256,12 +236,29 @@
                 return false;
             }
 
-            if (!buktiFile) {
-                return confirm('Anda belum upload bukti bayar. Lanjutkan?');
-            }
-
             return true;
         }
+
+        // Validate file on selection
+        document.getElementById('bukti_bayar').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                e.target.value = '';
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Format file tidak didukung! Gunakan JPG, JPEG, atau PNG.');
+                e.target.value = '';
+                return;
+            }
+        });
 
         // Hitung total saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {

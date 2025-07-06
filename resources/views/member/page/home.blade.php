@@ -162,14 +162,15 @@
                     @foreach ($galleries->take(6) as $gallery)
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="gallery-item rounded overflow-hidden shadow">
-                                <img src="{{ asset('storage/' . $gallery->image_url) }}" alt="{{ $gallery->caption }}"
-                                    class="img-fluid w-100" style="height: 300px; object-fit: cover;">
-                                <div class="gallery-overlay">
-                                    <div class="text-white">
-                                        <h5 class="mb-2">{{ $gallery->caption }}</h5>
-                                        <small><i class="fa fa-calendar-alt me-1"></i>
-                                            {{ $gallery->created_at->format('d M Y') }}</small>
-                                    </div>
+                                <div class="position-relative overflow-hidden">
+                                    <img src="{{ asset('storage/' . $gallery->image_url) }}" alt="{{ $gallery->caption }}"
+                                        class="img-fluid w-100 gallery-image"
+                                        style="height: 300px; object-fit: cover; transition: transform 0.3s ease;">
+                                </div>
+                                <div class="p-3 bg-white">
+                                    <h5 class="mb-2">{{ $gallery->caption }}</h5>
+                                    <small class="text-muted"><i class="fa fa-calendar-alt me-1"></i>
+                                        {{ $gallery->created_at->format('d M Y') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -192,3 +193,25 @@
     </div>
     <!-- Gallery Section End -->
 @endsection
+@push('styles')
+    <style>
+        .gallery-item .gallery-image {
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.1);
+        }
+
+        /* Optional: Add cursor pointer to indicate it's interactive */
+        .gallery-item {
+            cursor: pointer;
+        }
+
+        /* Optional: Add subtle shadow effect on hover */
+        .gallery-item:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+    </style>
+@endpush

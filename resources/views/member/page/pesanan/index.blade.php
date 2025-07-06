@@ -110,22 +110,53 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Bukti Bayar -->
-                                            @if ($pesan->bukti_bayar)
-                                                <div class="mb-3">
-                                                    <small class="text-muted mb-2 d-block">
-                                                        <i class="fas fa-receipt me-1"></i>Bukti Bayar:
-                                                    </small>
-                                                    <a href="{{ asset('storage/' . $pesan->bukti_bayar) }}" target="_blank"
-                                                        class="btn btn-outline-primary btn-sm">
-                                                        <i class="fas fa-eye me-1"></i>
-                                                        Lihat Bukti Bayar
-                                                    </a>
-                                                </div>
-                                            @endif
+                                            <!-- Bukti Bayar Section -->
+                                            <div class="mb-4">
+                                                <small class="text-muted mb-2 d-block">
+                                                    <i class="fas fa-receipt me-1"></i>Status Pembayaran:
+                                                </small>
+                                                @if ($pesan->bukti_bayar)
+                                                    <div class="alert alert-success border-0 py-2 mb-0">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                                <span class="mb-0">Bukti pembayaran telah diupload</span>
+                                                            </div>
+                                                            <div class="d-flex gap-2">
+                                                                <a href="{{ asset('storage/' . $pesan->bukti_bayar) }}"
+                                                                    target="_blank" class="btn btn-outline-success btn-sm">
+                                                                    <i class="fas fa-eye me-1"></i>Lihat Bukti
+                                                                </a>
+                                                                @if ($pesan->status == 'pending')
+                                                                    <button class="btn btn-outline-primary btn-sm"
+                                                                        onclick="showUploadModal({{ $pesan->id }})">
+                                                                        <i class="fas fa-edit me-1"></i>Ubah Bukti
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="alert alert-warning border-0 py-2 mb-0">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="d-flex align-items-center">
+                                                                <i
+                                                                    class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                                <span class="mb-0">Bukti pembayaran belum diupload</span>
+                                                            </div>
+                                                            @if ($pesan->status == 'pending')
+                                                                <button class="btn btn-warning btn-sm"
+                                                                    onclick="showUploadModal({{ $pesan->id }})">
+                                                                    <i class="fas fa-upload me-1"></i>Upload Bukti
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
 
                                             <!-- Actions -->
-                                            <div class="d-flex gap-2">
+                                            <div class="d-flex gap-2 flex-wrap">
                                                 <a href="{{ route('member.paket-wisata.show', $pesan->paketWisata->id) }}"
                                                     class="btn btn-primary btn-sm">
                                                     <i class="fas fa-info-circle me-1"></i>
@@ -156,24 +187,97 @@
         </div>
     </div>
     <!-- Pesanan Section End -->
+
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="uploadModalLabel">
+                        <i class="fas fa-upload me-2 text-primary"></i>Upload Bukti Pembayaran
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="bukti_bayar" class="form-label fw-semibold">
+                                        <i class="fas fa-file-image me-2"></i>Pilih File Bukti Bayar
+                                    </label>
+                                    <input type="file" class="form-control form-control-lg" id="bukti_bayar"
+                                        name="bukti_bayar" accept="image/*" required>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Format: JPG, PNG, JPEG. Maksimal 2MB
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-info h-100 d-flex align-items-center border-0">
+                                    <div>
+                                        <h6 class="fw-bold mb-2">
+                                            <i class="fas fa-university me-2"></i>Informasi Rekening
+                                        </h6>
+                                        <p class="mb-1"><strong>Bank BCA</strong></p>
+                                        <p class="mb-1"><strong>No. Rekening:</strong> 1234567890</p>
+                                        <p class="mb-0"><strong>A.n:</strong> PT NearMe</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Upload Bukti Bayar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
-@push('styles')
-    <style>
-        .hero-header {
-            background: linear-gradient(rgba(19, 53, 123, 0.8), rgba(19, 53, 123, 0.8)), url('assets/img/carousel-2.jpg');
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-size: cover;
+@push('scripts')
+    <script>
+        function showUploadModal(pesanId) {
+            // Set form action dengan prefix 'member'
+            const form = document.getElementById('uploadForm');
+            form.action = `/member/pesanan/${pesanId}/upload-bukti`;
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
+            modal.show();
         }
 
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+        // Validate file on selection
+        document.getElementById('bukti_bayar').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-    </style>
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                e.target.value = '';
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Format file tidak didukung! Gunakan JPG, JPEG, atau PNG.');
+                e.target.value = '';
+                return;
+            }
+
+            // Show file preview if valid
+            const fileName = file.name;
+            console.log('File selected:', fileName);
+        });
+    </script>
 @endpush

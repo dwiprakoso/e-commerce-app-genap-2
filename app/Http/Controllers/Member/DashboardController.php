@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Member;
 
 use App\Models\Video;
 use App\Models\Berita;
+use App\Models\Member;
 use App\Models\Gallery;
 use App\Models\PaketWisata;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -57,51 +59,16 @@ class DashboardController extends Controller
             'paketPopuler'
         ));
     }
-    public function indexTest()
+    public function profile()
     {
-        // Paket Wisata Terbaru (6 items untuk showcase)
-        $paketWisata = PaketWisata::where('status', 'aktif')
-            ->orderBy('created_at', 'desc')
-            ->take(6)
-            ->get();
+        // Cara yang lebih efisien - langsung query berdasarkan ID
+        $user = Member::find(Auth::id());
 
-        // Berita Terbaru (3 items untuk preview)
-        $berita = Berita::orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
+        // Alternatif lain yang juga benar:
+        // $user = Member::where('id', Auth::id())->first();
+        // $user = Auth::user(); // Jika sudah setup guard dengan model Member
 
-        // Video Terbaru (3 items untuk preview)
-        $videos = Video::orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
-
-        // Gallery Terbaru (6 items untuk showcase visual)
-        $galleries = Gallery::orderBy('created_at', 'desc')
-            ->take(6)
-            ->get();
-
-        // Statistik untuk menunjukkan kredibilitas
-        $stats = [
-            'total_paket' => PaketWisata::where('status', 'aktif')->count(),
-            'total_berita' => Berita::count(),
-            'total_video' => Video::count(),
-            'total_gallery' => Gallery::count()
-        ];
-
-        // Paket Wisata Populer/Terlaris (berdasarkan created_at atau bisa ditambah field popularity)
-        $paketPopuler = PaketWisata::where('status', 'aktif')
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
-
-        return view('member.page.index', compact(
-            'paketWisata',
-            'berita',
-            'videos',
-            'galleries',
-            'stats',
-            'paketPopuler'
-        ));
+        return view('member.page.profile.index', compact('user'));
     }
 
     public function paketWisata(Request $request)

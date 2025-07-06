@@ -129,6 +129,24 @@
         <div class="info-item">
             <strong>Total Data:</strong> {{ $pemesanans->count() }} pemesanan
         </div>
+
+        <!-- Tambahan info periode (opsional) -->
+        @if (isset($revenueData['date_from']) &&
+                isset($revenueData['date_to']) &&
+                $revenueData['date_from'] &&
+                $revenueData['date_to']
+        )
+            <div class="info-item">
+                <strong>Periode:</strong> {{ date('d/m/Y', strtotime($revenueData['date_from'])) }} -
+                {{ date('d/m/Y', strtotime($revenueData['date_to'])) }}
+            </div>
+        @endif
+
+        @if (isset($revenueData['total_revenue']))
+            <div class="info-item">
+                <strong>Total Pendapatan:</strong> Rp. {{ number_format($revenueData['total_revenue'], 0, ',', '.') }}
+            </div>
+        @endif
     </div>
 
     @if ($pemesanans->count() > 0)

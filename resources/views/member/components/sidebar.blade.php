@@ -50,7 +50,6 @@
                                 <i class="fa fa-user"></i>
                             </div>
                             <span class="user-name">{{ Auth::guard('member')->user()->name }}</span>
-                            <i class="fas fa-chevron-down ms-2 text-muted small"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-custom shadow">
                             <li class="dropdown-header">
@@ -58,11 +57,13 @@
                                     {{ Auth::guard('member')->user()->name }}!</small>
                             </li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
                                 <a href="{{ route('member.pesanan') }}" class="dropdown-item dropdown-item-custom">
                                     <i class="fas fa-shopping-bag me-2 text-primary"></i>Pesanan Saya
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('member.profile') }}" class="dropdown-item dropdown-item-custom">
+                                    <i class="fas fa-shopping-bag me-2 text-primary"></i>Profil Saya
                                 </a>
                             </li>
                             <li>

@@ -17,14 +17,31 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class PemesananExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
 {
     private $no = 1;
+    private $dateFrom;
+    private $dateTo;
+
+    public function __construct($dateFrom = null, $dateTo = null)
+    {
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
+    }
 
     public function collection()
     {
         try {
-            // Tambahkan limit untuk mencegah memory overflow
-            return Pesan::with(['member', 'paketwisata'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+            // Build query with filters
+            $query = Pesan::with(['member', 'paketwisata'])
+                ->orderBy('created_at', 'desc');
+
+            // Apply date filter if provided
+            if ($this->dateFrom && $this->dateTo) {
+                $query->whereBetween('created_at', [
+                    $this->dateFrom . ' 00:00:00',
+                    $this->dateTo . ' 23:59:59'
+                ]);
+            }
+
+            return $query->get();
         } catch (\Exception $e) {
             Log::error('Error fetching data for export: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
@@ -34,7 +51,7 @@ class PemesananExport implements FromCollection, WithHeadings, WithMapping, With
 
     public function headings(): array
     {
-        return [
+        $headings = [
             'No',
             'Nama Member',
             'Email Member',
@@ -45,6 +62,14 @@ class PemesananExport implements FromCollection, WithHeadings, WithMapping, With
             'Bukti Bayar',
             'Tanggal Pesan',
         ];
+
+        // Add period information if date filter is applied
+        if ($this->dateFrom && $this->dateTo) {
+            $periodInfo = 'Periode: ' . date('d/m/Y', strtotime($this->dateFrom)) . ' - ' . date('d/m/Y', strtotime($this->dateTo));
+            // We'll add this as a separate row, but for now just return the normal headings
+        }
+
+        return $headings;
     }
 
     public function map($pemesanan): array
@@ -96,10 +121,66 @@ class PemesananExport implements FromCollection, WithHeadings, WithMapping, With
     public function styles(Worksheet $sheet)
     {
         try {
+            // Add period information if date filter is applied
+            if ($this->dateFrom && $this->dateTo) {
+                $periodInfo = 'Periode: ' . date('d/m/Y', strtotime($this->dateFrom)) . ' - ' . date('d/m/Y', strtotime($this->dateTo));
+                $sheet->insertNewRowBefore(1, 1);
+                $sheet->setCellValue('A1', $periodInfo);
+                $sheet->mergeCells('A1:I1');
+                $sheet->getStyle('A1')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 12,
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'E2EFDA',
+                        ],
+                    ],
+                ]);
+
+                // Add summary row
+                $collection = $this->collection();
+                $totalRevenue = $collection->whereIn('status', ['diverifikasi', 'selesai'])->sum('total_harga');
+                $totalOrders = $collection->whereIn('status', ['diverifikasi', 'selesai'])->count();
+
+                $sheet->insertNewRowBefore(2, 1);
+                $summaryText = "Total Pendapatan: Rp. " . number_format($totalRevenue, 0, ',', '.') . " | Total Pesanan Lunas: " . $totalOrders;
+                $sheet->setCellValue('A2', $summaryText);
+                $sheet->mergeCells('A2:I2');
+                $sheet->getStyle('A2')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 11,
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'FFF2CC',
+                        ],
+                    ],
+                ]);
+
+                // Add empty row
+                $sheet->insertNewRowBefore(3, 1);
+
+                // Header now at row 4
+                $headerRow = 4;
+            } else {
+                $headerRow = 1;
+            }
+
             // Simplify styles to prevent conflicts
             $styles = [
                 // Style untuk header
-                1 => [
+                $headerRow => [
                     'font' => [
                         'bold' => true,
                         'size' => 12,
@@ -118,8 +199,8 @@ class PemesananExport implements FromCollection, WithHeadings, WithMapping, With
             ];
 
             // Apply borders to all data rows
-            $rowCount = $this->collection()->count() + 1; // +1 for header
-            for ($i = 1; $i <= $rowCount; $i++) {
+            $rowCount = $this->collection()->count() + $headerRow; // +header row
+            for ($i = $headerRow; $i <= $rowCount; $i++) {
                 $styles[$i]['borders'] = [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,

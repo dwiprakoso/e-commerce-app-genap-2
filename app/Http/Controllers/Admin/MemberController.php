@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\PaketWisata;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
 {
@@ -55,16 +56,15 @@ class MemberController extends Controller
     {
         $paket = PaketWisata::findOrFail($id);
 
-        // Validasi input
+        // Validasi input (bukti_bayar tidak wajib)
         $request->validate([
             'jumlah_orang' => 'required|integer|min:1|max:50',
-            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_bayar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // nullable
         ], [
             'jumlah_orang.required' => 'Jumlah orang harus diisi.',
             'jumlah_orang.integer' => 'Jumlah orang harus berupa angka.',
             'jumlah_orang.min' => 'Jumlah orang minimal 1 orang.',
             'jumlah_orang.max' => 'Jumlah orang maksimal 50 orang.',
-            'bukti_bayar.required' => 'Bukti bayar harus diupload.',
             'bukti_bayar.image' => 'File bukti bayar harus berupa gambar.',
             'bukti_bayar.mimes' => 'Format file bukti bayar harus jpeg, png, atau jpg.',
             'bukti_bayar.max' => 'Ukuran file bukti bayar maksimal 2MB.',
@@ -73,12 +73,11 @@ class MemberController extends Controller
         // Hitung total harga
         $totalHarga = $paket->price * $request->jumlah_orang;
 
-        // Upload bukti bayar ke storage
+        // Upload bukti bayar ke storage (jika ada)
         $buktiPayarName = null;
         if ($request->hasFile('bukti_bayar')) {
             $file = $request->file('bukti_bayar');
-            // Simpan ke folder storage/app/public/bukti_bayar
-            $buktiPayarName = $file->store('bukti_bayar', 'public'); // 'public' adalah disk storage yang diatur di config/filesystems.php
+            $buktiPayarName = $file->store('bukti_bayar', 'public');
         }
 
         // Simpan data pesanan
@@ -91,8 +90,43 @@ class MemberController extends Controller
         $pesan->bukti_bayar = $buktiPayarName;
         $pesan->save();
 
+        $message = $buktiPayarName ?
+            'Pesanan berhasil dibuat! Pesanan Anda sedang diproses.' :
+            'Pesanan berhasil dibuat! Silakan upload bukti pembayaran di halaman pesanan.';
+
         return redirect()->route('member.pesanan')
-            ->with('success', 'Pesanan berhasil dibuat! Pesanan Anda sedang diproses.');
+            ->with('success', $message);
+    }
+    public function uploadBuktiPembayaran(Request $request, $id)
+    {
+        $pesan = Pesan::where('id', $id)
+            ->where('member_id', auth()->id())
+            ->firstOrFail();
+
+        $request->validate([
+            'bukti_bayar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'bukti_bayar.required' => 'Bukti bayar harus diupload.',
+            'bukti_bayar.image' => 'File bukti bayar harus berupa gambar.',
+            'bukti_bayar.mimes' => 'Format file bukti bayar harus jpeg, png, atau jpg.',
+            'bukti_bayar.max' => 'Ukuran file bukti bayar maksimal 2MB.',
+        ]);
+
+        // Hapus file lama jika ada
+        if ($pesan->bukti_bayar && Storage::disk('public')->exists($pesan->bukti_bayar)) {
+            Storage::disk('public')->delete($pesan->bukti_bayar);
+        }
+
+        // Upload file baru
+        $file = $request->file('bukti_bayar');
+        $buktiPayarName = $file->store('bukti_bayar', 'public');
+
+        // Update pesanan
+        $pesan->bukti_bayar = $buktiPayarName;
+        $pesan->save();
+
+        return redirect()->route('member.pesanan')
+            ->with('success', 'Bukti pembayaran berhasil diupload!');
     }
 
 
