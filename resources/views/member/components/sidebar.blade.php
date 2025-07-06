@@ -117,16 +117,14 @@
     }
 
     .nav-link-custom.active {
-        background-color: white;
-        color: var(--bs-primary) !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+        background-color: var(--bs-primary);
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(var(--bs-primary-rgb), 0.3);
     }
 
     .nav-link-custom.active:hover {
-        color: var(--bs-primary) !important;
+        color: white !important;
         transform: translateY(-2px);
-        background-color: white;
     }
 
     /* Button Styling */
