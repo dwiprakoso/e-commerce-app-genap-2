@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap"
         rel="stylesheet" />
-
+    <link rel="icon" type="image/png" href="assets/img/icon-logo.png" />
     <!-- Icon Font Stylesheet -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
@@ -229,10 +229,34 @@
                 }
             });
 
-            $('.back-to-top').click(function() {
-                $('html, body').animate({
-                    scrollTop: 0
-                }, 100, 'easeInOutExpo');
+            // OPTIMIZED: Back to top click - ZERO DELAY VERSION
+            $('.back-to-top').click(function(e) {
+                e.preventDefault();
+
+                // Stop SEMUA animasi dan scroll behavior
+                $('html, body').stop(true, true);
+                $('*').stop(true, true); // Stop animasi di semua element
+
+                // Disable smooth scroll CSS sementara
+                const html = document.documentElement;
+                const originalScrollBehavior = html.style.scrollBehavior;
+                html.style.scrollBehavior = 'auto';
+
+                // Method 1: Instant scroll
+                window.scrollTo(0, 0);
+
+                // Method 2: Paksa dengan multiple approach
+                document.body.scrollTop = 0; // Safari
+                document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+
+                // Method 3: jQuery fallback
+                $('html, body').scrollTop(0);
+
+                // Restore scroll behavior setelah sedikit delay
+                setTimeout(() => {
+                    html.style.scrollBehavior = originalScrollBehavior;
+                }, 50);
+
                 return false;
             });
 
